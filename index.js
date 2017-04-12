@@ -1,8 +1,7 @@
 
-
 const _ = new WeakMap();
 
-class Repeater {
+export default class Repeater {
 
     constructor (fn, interval) {
         // TODO parameter error handle 
@@ -11,21 +10,24 @@ class Repeater {
             isRunning: false,
             interval,
         };
-        let cancel;
+        const method = {
+            repeat: null,
+            cancel: null
+        };
 
-        const repeat = () => {
+        method.repeat = () => {
             state.isRunning = true;
 
             let isCancel = false,
                 timerId = -1;
-            fn.then( (newInterval = state.interval) => {
+            fn().then( (newInterval = state.interval) => {
                 if (isCancel) return;
                 
-                timerId = setTimeout(repeat, newInterval);
+                timerId = setTimeout(method.repeat, newInterval);
                 state.interval = newInterval; 
             }).catch( () => state.isRunning = false);
 
-            cancel = () => { 
+            method.cancel = () => { 
                 isCancel = true;
                 clearTimeout(timerId);
                 
@@ -34,17 +36,21 @@ class Repeater {
             };
         };
 
-        _.set(this, { state, repeat, cancel });
+        _.set(this, { state, method });
+    }
+
+    get isRunning () {
+        return _.get(this).state.isRunning;
     }
 
     start () {
         const isRunning = _.get(this).state.isRunning;
         if (isRunning) return;
 
-        _.get(this).repeat();
+        _.get(this).method.repeat();
     }
 
     stop () {
-        _.get(this).cancel();
+        _.get(this).method.cancel();
     }
 }
