@@ -7,7 +7,7 @@ function delayPrint (msg, delay) {
     return new Promise( (resolve, reject) => {
         setTimeout( () => {
             console.log(`${msg}-${++counter}`);
-            resolve(delay);
+            resolve();
         }, delay);
     });
 }
