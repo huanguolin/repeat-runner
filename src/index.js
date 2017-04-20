@@ -5,6 +5,8 @@
  * Released under the MIT License.
  */
 
+import 'babel-polyfill';
+
 const _ = new WeakMap();
 
 export default class RepeatRunner {
