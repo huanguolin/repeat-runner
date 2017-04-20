@@ -1,5 +1,5 @@
 import chai from 'chai';
-import RepeatRunner from '../index';
+import RepeatRunner from '../src/index';
 
 const expect = chai.expect;
 

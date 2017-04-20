@@ -1,8 +1,22 @@
+/*!
+ * RepeatRunner
+ * 
+ * (c) 2017 Alvin Huang
+ * Released under the MIT License.
+ */
 
 const _ = new WeakMap();
 
 export default class RepeatRunner {
 
+    /**
+     * RepeatRunner constructor function.
+     * 
+     * @param {function} fn A function wrap the code you want repeat.
+     * @param {number} interval The interval time between two repeat run (unit: ms). 
+     *                  And you can change it in runtime via "fn" return promise: 
+     *                  resolve(interval).
+     */
     constructor (fn, interval) {
         // TODO parameter error handle 
 
@@ -39,10 +53,16 @@ export default class RepeatRunner {
         _.set(this, { state, method });
     }
 
+    /**
+     * Read-only attribute, tell current state is running or stop.
+     */
     get isRunning () {
         return _.get(this).state.isRunning;
     }
 
+    /**
+     * Start runner.
+     */
     start () {
         const isRunning = _.get(this).state.isRunning;
         if (isRunning) return;
@@ -50,6 +70,9 @@ export default class RepeatRunner {
         _.get(this).method.repeat();
     }
 
+    /**
+     * Stop runner.
+     */
     stop () {
         _.get(this).method.cancel();
     }

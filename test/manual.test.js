@@ -1,5 +1,5 @@
 
-import RepeatRunner from '../index'; 
+import RepeatRunner from '../src/index'; 
 
 let counter = 0;
 
