@@ -2,7 +2,7 @@
   "name": "repeat-runner",
   "version": "0.0.3",
   "description": "A javascript tool for run repeat code.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register",
     "build": "babel src --out-dir dist/"
