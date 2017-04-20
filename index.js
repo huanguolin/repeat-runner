@@ -1,7 +1,7 @@
 
 const _ = new WeakMap();
 
-export default class Repeater {
+export default class RepeatRunner {
 
     constructor (fn, interval) {
         // TODO parameter error handle 

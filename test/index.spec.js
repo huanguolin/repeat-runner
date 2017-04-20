@@ -1,5 +1,5 @@
 import chai from 'chai';
-import Repeater from '../index';
+import RepeatRunner from '../index';
 
 const expect = chai.expect;
 
@@ -17,7 +17,7 @@ describe('Repeater basic', () => {
     let repeater;
 
     beforeEach( () => {
-        repeater = new Repeater( () => { 
+        repeater = new RepeatRunner( () => { 
             return delayPrint('hello', 500); 
         }, 1000);
     });

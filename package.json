@@ -1,6 +1,6 @@
 {
-  "name": "repeater",
-  "version": "0.0.1",
+  "name": "repeat-runner",
+  "version": "0.0.2",
   "description": "A javascript tool for run repeat code.",
   "main": "index.js",
   "scripts": {
@@ -8,19 +8,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Huanguolin/repeater.git"
+    "url": "git+https://github.com/Huanguolin/repeat-runner.git"
   },
   "keywords": [
-    "repeater",
     "repeat",
+    "runner",
     "js"
   ],
   "author": "Alvin Huang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Huanguolin/repeater/issues"
+    "url": "https://github.com/Huanguolin/repeat-runner/issues"
   },
-  "homepage": "https://github.com/Huanguolin/repeater#readme",
+  "homepage": "https://github.com/Huanguolin/repeat-runner#readme",
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",

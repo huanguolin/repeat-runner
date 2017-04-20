@@ -1,5 +1,5 @@
 
-import Repeater from '../index'; 
+import RepeatRunner from '../index'; 
 
 let counter = 0;
 
@@ -12,7 +12,7 @@ function delayPrint (msg, delay) {
     });
 }
 
-const repeater = new Repeater( () => delayPrint('hello', 500), 5000);
+const repeater = new RepeatRunner( () => delayPrint('hello', 500), 5000);
 
 console.log('isRunning: ' + repeater.isRunning);
 repeater.start();
