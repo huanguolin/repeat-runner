@@ -7,7 +7,9 @@
 
 import 'babel-polyfill';
 
+
 const _ = new WeakMap();
+
 
 export default class RepeatRunner {
 
@@ -36,12 +38,14 @@ export default class RepeatRunner {
 
             let isCancel = false,
                 timerId = -1;
-            fn().then( (newInterval = state.interval) => {
-                if (isCancel) return;
-                
-                timerId = setTimeout(method.repeat, newInterval);
-                state.interval = newInterval; 
-            }).catch( () => state.isRunning = false);
+
+            Promise.resolve(fn())
+                .then( (newInterval = state.interval) => {
+                    if (isCancel) return;
+                    
+                    timerId = setTimeout(method.repeat, newInterval);
+                    state.interval = newInterval; 
+                }).catch( () => state.isRunning = false);
 
             method.cancel = () => { 
                 isCancel = true;

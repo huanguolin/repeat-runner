@@ -1,6 +1,6 @@
 {
   "name": "repeat-runner",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "A javascript tool for run repeat code.",
   "main": "dist/index.js",
   "scripts": {

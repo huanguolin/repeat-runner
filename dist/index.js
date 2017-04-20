@@ -46,7 +46,8 @@ var RepeatRunner = function () {
 
             var isCancel = false,
                 timerId = -1;
-            fn().then(function () {
+
+            Promise.resolve(fn()).then(function () {
                 var newInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : state.interval;
 
                 if (isCancel) return;
