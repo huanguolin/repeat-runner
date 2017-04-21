@@ -9,7 +9,7 @@
 const _ = new WeakMap();
 
 
-export default class RepeatRunner {
+class RepeatRunner {
 
     /**
      * RepeatRunner constructor function.
@@ -81,3 +81,6 @@ export default class RepeatRunner {
         _.get(this).method.cancel();
     }
 }
+
+export default RepeatRunner;
+export { RepeatRunner };

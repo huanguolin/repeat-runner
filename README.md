@@ -26,6 +26,7 @@ hello
 ```
 
 2. Async call
+
 ```js
 // example 1
 const repeatAsyncHello = new RepeatRunner( () => {
