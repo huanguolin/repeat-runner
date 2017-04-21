@@ -59,6 +59,7 @@
          * @param {number} interval The interval time between two repeat run (unit: ms). 
          *                  And you can change it in runtime via "fn" return promise: 
          *                  resolve(interval).
+         * @return {repeatRunner}
          */
         function RepeatRunner(fn, interval) {
             _classCallCheck(this, RepeatRunner);
@@ -83,6 +84,7 @@
                 Promise.resolve(fn()).then(function () {
                     var newInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : state.interval;
 
+                    // TODO parameter error handle 
                     if (isCancel) return;
 
                     timerId = setTimeout(method.repeat, newInterval);
@@ -105,21 +107,47 @@
 
         /**
          * Read-only attribute, tell current state is running or stop.
+         * 
+         * @return {boolean}
          */
 
 
         _createClass(RepeatRunner, [{
             key: "start",
             value: function start() {
+                var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
+
                 var isRunning = _.get(this).state.isRunning;
                 if (isRunning) return;
 
-                _.get(this).method.repeat();
+                var fn = _.get(this).method.repeat;
+                delay = Number(delay);
+                if (Number.isNaN(delay) || delay < 0) {
+                    fn();
+                } else {
+                    setTimeout(fn, delay);
+                }
             }
         }, {
             key: "stop",
             value: function stop() {
-                _.get(this).method.cancel();
+                var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
+
+                var isRunning = _.get(this).state.isRunning;
+                if (!isRunning) return;
+
+                // cancel method may change frequently.
+                // so can't just reference it.
+                var fs = _.get(this).method;
+                delay = Number(delay);
+                if (Number.isNaN(delay) || delay < 0) {
+                    fs.cancel();
+                } else {
+                    // can't reference cancel, see above.
+                    setTimeout(function () {
+                        return fs.cancel();
+                    }, delay);
+                }
             }
         }, {
             key: "isRunning",

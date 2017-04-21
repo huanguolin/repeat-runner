@@ -8,7 +8,6 @@
 
 const _ = new WeakMap();
 
-
 class RepeatRunner {
 
     /**
@@ -18,6 +17,7 @@ class RepeatRunner {
      * @param {number} interval The interval time between two repeat run (unit: ms). 
      *                  And you can change it in runtime via "fn" return promise: 
      *                  resolve(interval).
+     * @return {repeatRunner}
      */
     constructor (fn, interval) {
         // TODO parameter error handle 
@@ -39,6 +39,7 @@ class RepeatRunner {
 
             Promise.resolve(fn())
                 .then( (newInterval = state.interval) => {
+                    // TODO parameter error handle 
                     if (isCancel) return;
                     
                     timerId = setTimeout(method.repeat, newInterval);
@@ -59,6 +60,8 @@ class RepeatRunner {
 
     /**
      * Read-only attribute, tell current state is running or stop.
+     * 
+     * @return {boolean}
      */
     get isRunning () {
         return _.get(this).state.isRunning;
@@ -66,19 +69,41 @@ class RepeatRunner {
 
     /**
      * Start runner.
+     * 
+     * @param {number} delay Optional parameter use to delay start action
      */
-    start () {
+    start (delay = -1) {
         const isRunning = _.get(this).state.isRunning;
         if (isRunning) return;
 
-        _.get(this).method.repeat();
+        const fn = _.get(this).method.repeat;
+        delay = Number(delay);
+        if (Number.isNaN(delay) || delay < 0) {
+            fn();
+        } else {
+            setTimeout(fn, delay);
+        }
     }
 
     /**
      * Stop runner.
+     * 
+     * @param {number} delay Optional parameter use to delay stop action
      */
-    stop () {
-        _.get(this).method.cancel();
+    stop (delay = -1) {
+        const isRunning = _.get(this).state.isRunning;
+        if (!isRunning) return;
+
+        // cancel method may change frequently.
+        // so can't just reference it.
+        const fs = _.get(this).method;
+        delay = Number(delay);
+        if (Number.isNaN(delay) || delay < 0) {
+            fs.cancel();
+        } else {
+            // can't reference cancel, see above.
+            setTimeout(() => fs.cancel(), delay);
+        }
     }
 }
 

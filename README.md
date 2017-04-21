@@ -15,7 +15,7 @@ const repeatHello = new RepeatRunner( () => console.log('hello'), 1000);
 repeatHello.start(); 
 
 // stop
-setTimeout(() => repeatHello.stop(), 1000 * 3);
+repeatHello.stop(1000 * 3);
 
 // result: print 'hello' every second util stop 
 /*
