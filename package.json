@@ -1,8 +1,8 @@
 {
   "name": "repeat-runner",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A javascript tool for run repeat code.",
-  "main": "dist/index.js",
+  "main": "dist/repeat-runner.js",
   "scripts": {
     "test": "babel-node test/manual.test.js",
     "build": "babel src/index.js --out-file dist/repeat-runner.js"
