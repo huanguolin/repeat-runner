@@ -39,7 +39,7 @@ hello
 Repeat async code, just return a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). Of course, you can use [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) grammar. 
 ```js
 // simple-1
-// use only Promise
+// use Promise only
 const repeatAsyncHello = new RepeatRunner( () => {
     return new Promis( (resolve, reject) => {
         setTimeout( () => {
@@ -79,14 +79,14 @@ Parameters
 
 ### Instance property & methods
 
-> `RepeatRunner.isRunning` (read-only)  
-> `RepeatRunner.prototype.start(delay = -1)`
-> `RepeatRunner.prototype.stop(delay = -1)`   
+> `RepeatRunner.isRunning` (read-only)     
+> `RepeatRunner.prototype.start(delay = -1)`   
+> `RepeatRunner.prototype.stop(delay = -1)`      
 
 
 ### Notice
 
-The return value of `execFunction` is use to change interval or stop repeat.   
+The return value (or `Promise#resolve` parameter) of `execFunction` is use to change interval, and `Promise#reject` use to stop repeat.     
 **But accept number only, other types will be discarded.**
 
 For example: 
