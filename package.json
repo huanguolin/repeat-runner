@@ -1,11 +1,11 @@
 {
   "name": "repeat-runner",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A javascript tool for run repeat code.",
   "main": "dist/index.js",
   "scripts": {
     "test": "babel-node test/manual.test.js",
-    "build": "babel src --out-dir dist/"
+    "build": "babel src/index.js --out-file dist/repeat-runner.js"
   },
   "repository": {
     "type": "git",

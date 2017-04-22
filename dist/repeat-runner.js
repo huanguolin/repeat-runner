@@ -96,7 +96,7 @@
                     }
                     timerId = setTimeout(method.repeat, state.interval);
                 }).catch(function () {
-                    return state.isRunning = false;
+                    return method.cancel();
                 });
 
                 method.cancel = function () {
