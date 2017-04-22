@@ -41,7 +41,7 @@ Repeat async code, just return a [Promise](https://developer.mozilla.org/en-US/d
 // simple-1
 // use Promise only
 const repeatAsyncHello = new RepeatRunner( () => {
-    return new Promis( (resolve, reject) => {
+    return new Promise( (resolve, reject) => {
         setTimeout( () => {
             console.log('async hello');
             resolve();
@@ -124,7 +124,7 @@ const INTERVAL = 1000; // 1s
 let cnt = 0;
 
 new RepeatRunner( () => {
-    return new Promis( (resolve, reject) => {            
+    return new Promise( (resolve, reject) => {            
         console.log(cnt++);
 
         if (cnt > 4) {
