@@ -50,7 +50,7 @@ class RepeatRunner {
                         state.interval = newInterval; 
                     }
                     timerId = setTimeout(method.repeat, state.interval);
-                }).catch( () => state.isRunning = false);
+                }).catch( () => method.cancel());
 
             method.cancel = () => { 
                 isCancel = true;

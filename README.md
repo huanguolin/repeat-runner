@@ -127,11 +127,11 @@ new RepeatRunner( () => {
     return new Promis( (resolve, reject) => {            
         console.log(cnt++);
 
-        if (cnt > 2) {
-            resolve(INTERVAL * 2); // next execute, 2s later
-        } else if (cnt > 4) {
+        if (cnt > 4) {
             reject(); // stop it 
-        } else {
+        } else if (cnt > 2) {
+            resolve(INTERVAL * 2); // next execute, 2s later
+        } else { 
             resolve(INTERVAL); // next execute, 1s later
         }
     });
