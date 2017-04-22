@@ -19,8 +19,13 @@ class RepeatRunner {
      *                  resolve(interval).
      * @return {repeatRunner}
      */
-    constructor (fn, interval) {
-        // TODO parameter error handle 
+    constructor (fn, interval = 0) {
+        if (typeof fn !== 'function') {
+            throw new Error('Frist parameter must be a function.');
+        }
+
+        interval = Number(interval);
+        interval = Number.isNaN(interval) ? 0 : Math.floor(interval);
 
         const state = {
             isRunning: false,
@@ -38,12 +43,13 @@ class RepeatRunner {
                 timerId = -1;
 
             Promise.resolve(fn())
-                .then( (newInterval = state.interval) => {
-                    // TODO parameter error handle 
+                .then( (newInterval) => {
                     if (isCancel) return;
                     
-                    timerId = setTimeout(method.repeat, newInterval);
-                    state.interval = newInterval; 
+                    if (typeof newInterval === 'number') {
+                        state.interval = newInterval; 
+                    }
+                    timerId = setTimeout(method.repeat, state.interval);
                 }).catch( () => state.isRunning = false);
 
             method.cancel = () => { 

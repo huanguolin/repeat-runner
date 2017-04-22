@@ -1,6 +1,6 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(["exports"], factory);
+        define(['exports'], factory);
     } else if (typeof exports !== "undefined") {
         factory(exports);
     } else {
@@ -11,7 +11,7 @@
         global.RepeatRunner = mod.exports;
     }
 })(this, function (exports) {
-    "use strict";
+    'use strict';
 
     Object.defineProperty(exports, "__esModule", {
         value: true
@@ -61,10 +61,17 @@
          *                  resolve(interval).
          * @return {repeatRunner}
          */
-        function RepeatRunner(fn, interval) {
+        function RepeatRunner(fn) {
+            var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
             _classCallCheck(this, RepeatRunner);
 
-            // TODO parameter error handle 
+            if (typeof fn !== 'function') {
+                throw new Error('Frist parameter must be a function.');
+            }
+
+            interval = Number(interval);
+            interval = Number.isNaN(interval) ? 0 : Math.floor(interval);
 
             var state = {
                 isRunning: false,
@@ -81,14 +88,13 @@
                 var isCancel = false,
                     timerId = -1;
 
-                Promise.resolve(fn()).then(function () {
-                    var newInterval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : state.interval;
-
-                    // TODO parameter error handle 
+                Promise.resolve(fn()).then(function (newInterval) {
                     if (isCancel) return;
 
-                    timerId = setTimeout(method.repeat, newInterval);
-                    state.interval = newInterval;
+                    if (typeof newInterval === 'number') {
+                        state.interval = newInterval;
+                    }
+                    timerId = setTimeout(method.repeat, state.interval);
                 }).catch(function () {
                     return state.isRunning = false;
                 });
@@ -113,7 +119,7 @@
 
 
         _createClass(RepeatRunner, [{
-            key: "start",
+            key: 'start',
             value: function start() {
                 var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
@@ -129,7 +135,7 @@
                 }
             }
         }, {
-            key: "stop",
+            key: 'stop',
             value: function stop() {
                 var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
@@ -150,7 +156,7 @@
                 }
             }
         }, {
-            key: "isRunning",
+            key: 'isRunning',
             get: function get() {
                 return _.get(this).state.isRunning;
             }
