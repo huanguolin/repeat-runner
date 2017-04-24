@@ -61,7 +61,7 @@ describe('RepeatRunner.isRunning', () => {
         instance = null;
     });
 
-    it('not start, should be running', () => {
+    it('not start, should be not running', () => {
         expect(instance.isRunning).to.be.false;
     });
 
@@ -115,7 +115,7 @@ describe('RepeatRunner#start', () => {
     });
     
     it(`Runs 'start()' several times in succession, 
-        the same as the one effect`, 
+        the same as the once effect`, 
         function (done) { 
         this.timeout(INTERVAL * 5); 
         
