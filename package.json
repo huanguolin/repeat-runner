@@ -5,7 +5,7 @@
   "main": "dist/repeat-runner.js",
   "scripts": {
     "test": "babel-node test/manual.test.js",
-    "build": "babel src/index.js --out-file dist/repeat-runner.js"
+    "build": "babel src/repeat-runner.js --out-file dist/repeat-runner.js"
   },
   "repository": {
     "type": "git",
