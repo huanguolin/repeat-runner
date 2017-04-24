@@ -8,7 +8,7 @@
             exports: {}
         };
         factory(mod.exports);
-        global.RepeatRunner = mod.exports;
+        global.repeatRunner = mod.exports;
     }
 })(this, function (exports) {
     'use strict';

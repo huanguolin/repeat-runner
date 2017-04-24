@@ -1,5 +1,5 @@
 import chai from 'chai';
-import RepeatRunner from '../src/repeat-runner';
+import RepeatRunner from '../dist/repeat-runner';
 
 const expect = chai.expect;
 
@@ -42,20 +42,24 @@ describe('RepeatRunner#constructor', () => {
 
 describe('RepeatRunner.isRunning', () => {
 
-    const INTERVAL = 100; //0.1S
+    const INTERVAL = 100; // 0.1S
     let instance, 
         cnt;
 
     beforeEach( () => {
         cnt = 0;
-        instance = new RepeatRunner( () => cnt++, INTERVAL); 
+        instance = new RepeatRunner( () => { 
+            // Here can't omit '{}', because arrow function 
+            // make default return value to be 'cnt++'.
+            // It'll change inner interval !! 
+            cnt++;
+        }, INTERVAL); 
     });
 
     afterEach( () => {
         instance.stop();
         instance = null;
     });
-
 
     it('not start, should be running', () => {
         expect(instance.isRunning).to.be.false;
@@ -72,27 +76,141 @@ describe('RepeatRunner.isRunning', () => {
         expect(instance.isRunning).to.be.false;
     });
 
-    it(`start and stop, the 'execFunction' 
-        should be executed at least once`, 
-        () => {
-        instance.start();
+}); 
+
+describe('RepeatRunner#start', () => {
+
+    const INTERVAL = 100; // 0.1S
+    let instance, 
+        cnt;
+
+    beforeEach( () => {
+        cnt = 0;
+        instance = new RepeatRunner( () => { 
+            // Here can't omit '{}', because arrow function 
+            // make default return value to be 'cnt++'.
+            // It'll change inner interval !! 
+            cnt++;
+        }, INTERVAL); 
+    });
+
+    afterEach( () => {
         instance.stop();
-        expect(cnt > 0).to.be.true;
+        instance = null;
     });
 
     it(`interval is ${INTERVAL}ms, run 3*${INTERVAL}ms, 
-        the 'execFunction' should be executed 1+3 times`, 
-        done => {
-        console.log('start: ', cnt);
+        the 'execFunction' should be executed 3 times`,
+        // here can't use arrow function, 
+        // see https://mochajs.org/#arrow-functions 
+        function (done) { 
+        this.timeout(INTERVAL * 5);
+
         instance.start();
 
         setTimeout( () => {
-            instance.stop();
-            console.log('stop: ', cnt);
-
-            if (cnt === 4) done();
+            if (cnt === 3) done();
             else done(new Error());
         }, INTERVAL * 3);
     });
+    
+    it(`Runs 'start()' several times in succession, 
+        the same as the one effect`, 
+        function (done) { 
+        this.timeout(INTERVAL * 5); 
+        
+        instance.start();
+        instance.start();
+        instance.start();
 
-}); 
+        setTimeout(() => {
+            if (cnt === 3) done();
+            else done(new Error());
+        }, INTERVAL * 3);
+    }); 
+
+    it(`use delay parameter and delay ${INTERVAL}ms, 
+        the 'execFunction' should be executed at ${INTERVAL}ms later`, 
+        function (done) { 
+        this.timeout(INTERVAL * 5); 
+        
+        // before
+        expect(cnt === 0).to.be.true;
+        expect(instance.isRunning).to.be.false;
+
+        instance.start(INTERVAL);
+
+        // after
+        expect(cnt === 0).to.be.true;
+        expect(instance.isRunning).to.be.false;
+
+        setTimeout(() => {
+            expect(cnt === 0).to.be.true;
+            expect(instance.isRunning).to.be.false;
+        }, INTERVAL / 2);
+
+        setTimeout(() => {
+            if (cnt === 1 && instance.isRunning) done();
+            else done(new Error());
+        }, INTERVAL);
+    });
+
+});
+
+describe('RepeatRunner#stop', () => {
+
+    const INTERVAL = 100; // 0.1S
+    let instance, 
+        cnt;
+
+    beforeEach( () => {
+        cnt = 0;
+        instance = new RepeatRunner( () => { 
+            // Here can't omit '{}', because arrow function 
+            // make default return value to be 'cnt++'.
+            // It'll change inner interval !! 
+            cnt++;
+        }, INTERVAL); 
+    });
+
+    afterEach( () => {
+        instance.stop();
+        instance = null;
+    });
+    
+    it(`start and stop, the 'execFunction' 
+        should be executed only once`, 
+        () => {
+        instance.start();
+        instance.stop();
+        expect(cnt === 1).to.be.true;
+
+        cnt = 0;
+        instance = new RepeatRunner( () => {cnt++}, 0);   
+        instance.start();
+        instance.stop();
+        expect(cnt === 1).to.be.true; 
+    });
+    
+    it(`use delay parameter and delay ${INTERVAL}ms, 
+        the 'RepeatRunner.isRunning' should be changed at ${INTERVAL}ms later`, 
+        function (done) { 
+        this.timeout(INTERVAL * 5); 
+        
+        instance.start();
+
+        expect(instance.isRunning).to.be.true;
+        instance.stop(INTERVAL);
+        expect(instance.isRunning).to.be.true;
+
+        setTimeout(() => {
+            expect(instance.isRunning).to.be.true;
+        }, INTERVAL / 2);
+
+        setTimeout(() => {
+            if (cnt === 1 && !instance.isRunning) done();
+            else done(new Error());
+        }, INTERVAL);
+    });
+
+});

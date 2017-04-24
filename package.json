@@ -4,8 +4,8 @@
   "description": "A javascript tool for run repeat code.",
   "main": "dist/repeat-runner.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register",
-    "build": "babel src/repeat-runner.js --out-file dist/repeat-runner.js"
+    "build": "babel src/ --out-dir dist/",
+    "test": "npm run build && mocha --compilers js:babel-core/register"
   },
   "repository": {
     "type": "git",
