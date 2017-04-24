@@ -1,5 +1,7 @@
 # repeat-runner
 
+[![NPM version](https://img.shields.io/npm/v/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
+
 A javascript tool for run repeat code.
 
 
