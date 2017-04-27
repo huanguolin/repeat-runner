@@ -5,5 +5,12 @@
     ["rename-umd-globals", {
       "index": "RepeatRunner"
     }]
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }
