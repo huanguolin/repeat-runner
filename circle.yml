@@ -4,4 +4,4 @@ machine:
 
 test:
   override:
-    - bash npm test
+    - npm test
