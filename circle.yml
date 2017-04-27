@@ -5,4 +5,4 @@ machine:
 test:
   override:
     - npm test
-    - cat ./coverage/lcov.info | ./node_modules/.bin/codecov
+    - cat ./test/coverage/lcov.info | ./node_modules/.bin/codecov

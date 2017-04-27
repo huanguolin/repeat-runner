@@ -11,6 +11,11 @@
     "test": "cross-env NODE_ENV=test nyc mocha"
   },
   "nyc": {
+    "check-coverage": true,
+    "lines": 90,
+    "statements": 90,
+    "functions": 90,
+    "branches": 90,
     "require": [
       "babel-register"
     ],
@@ -19,7 +24,9 @@
       "text"
     ],
     "sourceMap": false,
-    "instrument": false
+    "instrument": false,
+    "cache": true,
+    "report-dir": "./test/coverage"
   },
   "repository": {
     "type": "git",

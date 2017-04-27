@@ -1,1 +1,2 @@
- --reporter mochawesome
+ --reporter mochawesome 
+ --reporter-options reportDir=./test/reports

@@ -1,5 +1,5 @@
 node_modules/
-npm-debug.log*
-mochawesome-reports/
-coverage/
+*.log*
 .nyc_output/
+test/reports/
+test/coverage/
