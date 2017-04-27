@@ -1,11 +1,11 @@
 # repeat-runner
 
-[![NPM version](https://img.shields.io/npm/dt/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
+[![Build status](https://img.shields.io/circleci/project/Huanguolin/repeat-runner/master.svg)](https://circleci.com/gh/Huanguolin/repeat-runner)
+[![NPM download](https://img.shields.io/npm/dt/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
 [![NPM version](https://img.shields.io/npm/v/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
-[![NPM version](https://img.shields.io/npm/l/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
+[![NPM license](https://img.shields.io/npm/l/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
 
 A javascript tool for run repeat code.
-
 
 
 
