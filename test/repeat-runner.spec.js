@@ -40,6 +40,48 @@ describe('RepeatRunner#constructor', () => {
 
 }); 
 
+describe('RepeatRunner.interval', () => {
+    
+    const INTERVAL = 10;
+
+    it(`execFunction return a number can change the interval`, 
+        function (done) {
+        const rr = new RepeatRunner(() => INTERVAL * 3, INTERVAL);        
+        expect(rr.interval === INTERVAL).to.be.true;
+
+        rr.start().stop(1);  
+        setTimeout( () => {
+            if (rr.interval === (INTERVAL * 3)) done();
+            else done(new Error());
+        }, 0); 
+    });
+    
+    it(`execFunction return not a number can't change the interval`, 
+        function (done) {
+        const rr = new RepeatRunner(() => `${INTERVAL * 3}`, INTERVAL);        
+        expect(rr.interval === INTERVAL).to.be.true;
+
+        rr.start().stop(1);  
+        setTimeout( () => {
+            if (rr.interval !== (INTERVAL * 3)) done();
+            else done(new Error());
+        }, 0); 
+    });
+    
+    it(`execFunction return Promise#resolve(number) can change the interval also`, 
+        function (done) {
+        const rr = new RepeatRunner(() => Promise.resolve(INTERVAL * 3), INTERVAL);        
+        expect(rr.interval === INTERVAL).to.be.true;
+
+        rr.start().stop(1);  
+        setTimeout( () => {
+            if (rr.interval === (INTERVAL * 3)) done();
+            else done(new Error());
+        }, 0); 
+    });
+
+});
+
 describe('RepeatRunner.isRunning', () => {
 
     const INTERVAL = 100; // 0.1S
@@ -74,6 +116,17 @@ describe('RepeatRunner.isRunning', () => {
         instance.start();
         instance.stop();
         expect(instance.isRunning).to.be.false;
+    });
+    
+    it('execFunction return Promise#reject can stop it', 
+        function (done) {
+        instance = new RepeatRunner( () => Promise.reject(), INTERVAL);
+        instance.start(); 
+
+        setTimeout(() => {
+            if (instance.isRunning) done(new Error());
+            else done();
+        }, 0);
     });
 
 }); 

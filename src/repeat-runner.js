@@ -25,7 +25,7 @@ class RepeatRunner {
         }
 
         interval = Number(interval);
-        interval = Number.isNaN(interval) ? 0 : Math.floor(interval);
+        interval = interval > 0 ? Math.floor(interval) : 0;
 
         const state = {
             isRunning: false,
@@ -43,10 +43,11 @@ class RepeatRunner {
                 timerId = -1;
 
             Promise.resolve(fn())
-                .then( (newInterval) => {
+                .then( newInterval => {
                     if (isCancel) return;
                     
-                    if (typeof newInterval === 'number') {
+                    if (typeof newInterval === 'number' && 
+                        newInterval >= 0) {
                         state.interval = newInterval; 
                     }
                     timerId = setTimeout(method.repeat, state.interval);
@@ -74,6 +75,15 @@ class RepeatRunner {
     }
 
     /**
+     * Read-only attribute, tell current interval.
+     * 
+     * @return {number}
+     */
+    get interval () {
+        return _.get(this).state.interval;
+    }
+
+    /**
      * Start runner.
      * 
      * @param {number} delay Optional parameter use to delay start action
@@ -89,6 +99,8 @@ class RepeatRunner {
         } else {
             setTimeout(fn, delay);
         }
+
+        return this;
     }
 
     /**
@@ -110,6 +122,8 @@ class RepeatRunner {
             // can't reference cancel, see above.
             setTimeout(() => fs.cancel(), delay);
         }
+
+        return this;
     }
 }
 

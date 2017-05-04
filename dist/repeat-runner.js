@@ -71,7 +71,7 @@
             }
 
             interval = Number(interval);
-            interval = Number.isNaN(interval) ? 0 : Math.floor(interval);
+            interval = interval > 0 ? Math.floor(interval) : 0;
 
             var state = {
                 isRunning: false,
@@ -91,7 +91,7 @@
                 Promise.resolve(fn()).then(function (newInterval) {
                     if (isCancel) return;
 
-                    if (typeof newInterval === 'number') {
+                    if (typeof newInterval === 'number' && newInterval >= 0) {
                         state.interval = newInterval;
                     }
                     timerId = setTimeout(method.repeat, state.interval);
@@ -133,6 +133,8 @@
                 } else {
                     setTimeout(fn, delay);
                 }
+
+                return this;
             }
         }, {
             key: 'stop',
@@ -154,11 +156,18 @@
                         return fs.cancel();
                     }, delay);
                 }
+
+                return this;
             }
         }, {
             key: 'isRunning',
             get: function get() {
                 return _.get(this).state.isRunning;
+            }
+        }, {
+            key: 'interval',
+            get: function get() {
+                return _.get(this).state.interval;
             }
         }]);
 
