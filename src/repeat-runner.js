@@ -87,10 +87,11 @@ class RepeatRunner {
      * Start runner.
      * 
      * @param {number} delay Optional parameter use to delay start action
+     * @return {this}
      */
     start (delay = -1) {
         const isRunning = _.get(this).state.isRunning;
-        if (isRunning) return;
+        if (isRunning) return this;
 
         const fn = _.get(this).method.repeat;
         delay = Number(delay);
@@ -107,10 +108,11 @@ class RepeatRunner {
      * Stop runner.
      * 
      * @param {number} delay Optional parameter use to delay stop action
+     * @return {this}
      */
     stop (delay = -1) {
         const isRunning = _.get(this).state.isRunning;
-        if (!isRunning) return;
+        if (!isRunning) return this;
 
         // cancel method may change frequently.
         // so can't just reference it.

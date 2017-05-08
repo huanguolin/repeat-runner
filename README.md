@@ -28,10 +28,11 @@ import RepeatRunner from 'repeat-runner';
 
 const repeatHello = new RepeatRunner( () => console.log('hello'), 1000);
 
-// start
-repeatHello.start();
-// stop it at 3s later
-repeatHello.stop(1000 * 3);
+// start and stop ite 3 seconds later, 
+// it's equivalent to:
+// repeatHello.start();
+// repeatHello.stop(1000 * 3);
+repeatHello.start().stop(1000 * 3);
 
 // result: print 'hello' every second util stop 
 /*
@@ -84,15 +85,15 @@ Parameters
 
 ### Instance property & methods
 
-> `RepeatRunner.isRunning` (read-only)     
-> `RepeatRunner.prototype.start(delay = -1)`   
-> `RepeatRunner.prototype.stop(delay = -1)`      
+> `RepeatRunner.isRunning` [read-only]     
+> `RepeatRunner.interval`  [read-only]     
+> `RepeatRunner.prototype.start(delay = -1)` [return this]  
+> `RepeatRunner.prototype.stop(delay = -1)`  [return this]    
 
 
 ### Notice
 
-The return value (or `Promise#resolve` parameter) of `execFunction` is use to change interval, and `Promise#reject` use to stop repeat.     
-**But accept number only, other types will be discarded.**
+The return value (or `Promise#resolve` parameter) of `execFunction` is use to change interval (**But accept number only, other types will be discarded**), and `Promise#reject` use to stop repeat.  
 
 For example: 
 

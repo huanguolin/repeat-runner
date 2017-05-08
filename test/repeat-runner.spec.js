@@ -151,6 +151,12 @@ describe('RepeatRunner#start', () => {
         instance.stop();
         instance = null;
     });
+    
+    it(`should return this`, () => { 
+        instance.start();
+        expect(instance.start() === instance).to.be.true;
+        expect(instance.stop().start() === instance).to.be.true;
+    });
 
     it(`interval is ${INTERVAL}ms, run 3*${INTERVAL}ms, 
         the 'execFunction' should be executed 3 times`,
@@ -229,6 +235,11 @@ describe('RepeatRunner#stop', () => {
     afterEach( () => {
         instance.stop();
         instance = null;
+    });  
+
+    it(`should return this`, () => { 
+        expect(instance.start().stop() === instance).to.be.true;
+        expect(instance.stop() === instance).to.be.true;
     });
     
     it(`start and stop, the 'execFunction' 
