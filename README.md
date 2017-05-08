@@ -28,7 +28,7 @@ import RepeatRunner from 'repeat-runner';
 
 const repeatHello = new RepeatRunner( () => console.log('hello'), 1000);
 
-// start and stop ite 3 seconds later, 
+// start and stop it 3 seconds later, 
 // it's equivalent to:
 // repeatHello.start();
 // repeatHello.stop(1000 * 3);
@@ -36,6 +36,7 @@ repeatHello.start().stop(1000 * 3);
 
 // result: print 'hello' every second util stop 
 /*
+1000
 hello
 hello
 hello
