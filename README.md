@@ -36,7 +36,6 @@ repeatHello.start().stop(1000 * 3);
 
 // result: print 'hello' every second util stop 
 /*
-1000
 hello
 hello
 hello
