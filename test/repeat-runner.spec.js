@@ -250,7 +250,7 @@ describe('RepeatRunner#stop', () => {
             expect(cnt === 1).to.be.true;
 
             cnt = 0;
-            instance = new RepeatRunner( () => {cnt++}, 0);   
+            instance = new RepeatRunner( () => cnt++, 0);   
             instance.start();
             instance.stop();
             expect(cnt === 1).to.be.true; 

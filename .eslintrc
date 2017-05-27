@@ -30,8 +30,15 @@
         "computed-property-spacing": 2,
         "key-spacing": 2,
         "keyword-spacing": 2,
+        "space-infix-ops": 2,
+        "semi": 2,
+        "no-unneeded-ternary": 2,
+        "quote-props": [ 2, "as-needed" ],
+        "quotes": [ 2, "single", { "allowTemplateLiterals": true } ],
         "max-depth": 2, // default is 4
         "max-len": [ 2, 95 ], // default is 80
+        "max-params": [ 2, 5 ], // default is 5
+        "max-statements-per-line": 2, // default is 1
 
         /* ES6 */
         "no-var": 2
