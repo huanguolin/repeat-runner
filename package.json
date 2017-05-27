@@ -1,6 +1,6 @@
 {
   "name": "repeat-runner",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A javascript tool for run repeat code.",
   "main": "dist/repeat-runner.js",
   "files": [
@@ -9,14 +9,28 @@
   ],
   "scripts": {
     "build": "babel src/ --out-dir dist/",
-    "test": "cross-env NODE_ENV=test nyc mocha"
+    "test": "npm run lint && npm run test:unit",
+    "test:unit": "cross-env NODE_ENV=test nyc mocha",
+    "lint": "eslint src test/*.spec.js"
   },
   "nyc": {
     "watermarks": {
-      "lines": [80, 95],
-      "functions": [80, 95],
-      "branches": [80, 95],
-      "statements": [80, 95]
+      "lines": [
+        80,
+        95
+      ],
+      "functions": [
+        80,
+        95
+      ],
+      "branches": [
+        80,
+        95
+      ],
+      "statements": [
+        80,
+        95
+      ]
     },
     "require": [
       "babel-register"
@@ -56,6 +70,7 @@
     "chai": "^3.5.0",
     "codecov": "^2.1.0",
     "cross-env": "^4.0.0",
+    "eslint": "^3.19.0",
     "mocha": "^3.3.0",
     "mochawesome": "^2.0.5",
     "nyc": "^10.2.0"

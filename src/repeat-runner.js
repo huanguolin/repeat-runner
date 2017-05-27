@@ -17,7 +17,7 @@ class RepeatRunner {
      * @param {number} interval The interval time between two repeat run (unit: ms). 
      *                  And you can change it in runtime via "fn" return promise: 
      *                  resolve(interval).
-     * @return {repeatRunner}
+     * @return {repeatRunner} The instance.
      */
     constructor (fn, interval = 0) {
         if (typeof fn !== 'function') {
@@ -68,7 +68,7 @@ class RepeatRunner {
     /**
      * Read-only attribute, tell current state is running or stop.
      * 
-     * @return {boolean}
+     * @return {boolean} Result.
      */
     get isRunning () {
         return _.get(this).state.isRunning;
@@ -77,7 +77,7 @@ class RepeatRunner {
     /**
      * Read-only attribute, tell current interval.
      * 
-     * @return {number}
+     * @return {number} Result.
      */
     get interval () {
         return _.get(this).state.interval;
@@ -87,7 +87,7 @@ class RepeatRunner {
      * Start runner.
      * 
      * @param {number} delay Optional parameter use to delay start action
-     * @return {this}
+     * @return {this} The reference of this instance.
      */
     start (delay = -1) {
         const isRunning = _.get(this).state.isRunning;
@@ -108,7 +108,7 @@ class RepeatRunner {
      * Stop runner.
      * 
      * @param {number} delay Optional parameter use to delay stop action
-     * @return {this}
+     * @return {this} The reference of this instance.
      */
     stop (delay = -1) {
         const isRunning = _.get(this).state.isRunning;
