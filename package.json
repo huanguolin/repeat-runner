@@ -11,7 +11,7 @@
     "build": "babel src/ --out-dir dist/",
     "test": "npm run lint && npm run test:unit",
     "test:unit": "cross-env NODE_ENV=test nyc mocha",
-    "lint": "eslint src test/*.spec.js"
+    "lint": "eslint --fix src test/*.spec.js"
   },
   "nyc": {
     "watermarks": {
@@ -62,6 +62,7 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
+    "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-rename-umd-globals": "^1.0.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
@@ -71,6 +72,11 @@
     "codecov": "^2.1.0",
     "cross-env": "^4.0.0",
     "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "mocha": "^3.3.0",
     "mochawesome": "^2.0.5",
     "nyc": "^10.2.0"

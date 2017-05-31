@@ -1,21 +1,19 @@
 /*!
  * RepeatRunner
- * 
+ *
  * (c) 2017 Alvin Huang
  * Released under the MIT License.
  */
 
-
 const _ = new WeakMap();
 
 class RepeatRunner {
-
     /**
      * RepeatRunner constructor function.
-     * 
+     *
      * @param {function} fn A function wrap the code you want repeat.
-     * @param {number} interval The interval time between two repeat run (unit: ms). 
-     *                  And you can change it in runtime via "fn" return promise: 
+     * @param {number} interval The interval time between two repeat run (unit: ms).
+     *                  And you can change it in runtime via "fn" return promise:
      *                  resolve(interval).
      * @return {repeatRunner} The instance.
      */
@@ -29,7 +27,7 @@ class RepeatRunner {
 
         const state = {
             isRunning: false,
-            interval,
+            interval
         };
         const method = {
             repeat: null,
@@ -39,24 +37,24 @@ class RepeatRunner {
         method.repeat = () => {
             state.isRunning = true;
 
-            let isCancel = false,
-                timerId = -1;
+            let isCancel = false;
+            let timerId = -1;
 
             Promise.resolve(fn())
-                .then( newInterval => {
+                .then(newInterval => {
                     if (isCancel) return;
-                    
-                    if (typeof newInterval === 'number' && 
+
+                    if (typeof newInterval === 'number' &&
                         newInterval >= 0) {
-                        state.interval = newInterval; 
+                        state.interval = newInterval;
                     }
                     timerId = setTimeout(method.repeat, state.interval);
-                }).catch( () => method.cancel());
+                }).catch(() => method.cancel());
 
-            method.cancel = () => { 
+            method.cancel = () => {
                 isCancel = true;
                 clearTimeout(timerId);
-                
+
                 // update state
                 state.isRunning = false;
             };
@@ -67,7 +65,7 @@ class RepeatRunner {
 
     /**
      * Read-only attribute, tell current state is running or stop.
-     * 
+     *
      * @return {boolean} Result.
      */
     get isRunning () {
@@ -76,7 +74,7 @@ class RepeatRunner {
 
     /**
      * Read-only attribute, tell current interval.
-     * 
+     *
      * @return {number} Result.
      */
     get interval () {
@@ -85,7 +83,7 @@ class RepeatRunner {
 
     /**
      * Start runner.
-     * 
+     *
      * @param {number} delay Optional parameter use to delay start action
      * @return {this} The reference of this instance.
      */
@@ -106,7 +104,7 @@ class RepeatRunner {
 
     /**
      * Stop runner.
-     * 
+     *
      * @param {number} delay Optional parameter use to delay stop action
      * @return {this} The reference of this instance.
      */
