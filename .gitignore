@@ -3,3 +3,4 @@ node_modules/
 .nyc_output/
 test/reports/
 test/coverage/
+test/browser/tests.js
