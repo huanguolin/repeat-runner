@@ -43,7 +43,7 @@
 
     /*!
      * RepeatRunner
-     * 
+     *
      * (c) 2017 Alvin Huang
      * Released under the MIT License.
      */
@@ -51,15 +51,14 @@
     var _ = new WeakMap();
 
     var RepeatRunner = function () {
-
         /**
          * RepeatRunner constructor function.
-         * 
+         *
          * @param {function} fn A function wrap the code you want repeat.
-         * @param {number} interval The interval time between two repeat run (unit: ms). 
-         *                  And you can change it in runtime via "fn" return promise: 
+         * @param {number} interval The interval time between two repeat run (unit: ms).
+         *                  And you can change it in runtime via "fn" return promise:
          *                  resolve(interval).
-         * @return {repeatRunner}
+         * @return {repeatRunner} The instance.
          */
         function RepeatRunner(fn) {
             var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -85,8 +84,8 @@
             method.repeat = function () {
                 state.isRunning = true;
 
-                var isCancel = false,
-                    timerId = -1;
+                var isCancel = false;
+                var timerId = -1;
 
                 Promise.resolve(fn()).then(function (newInterval) {
                     if (isCancel) return;
@@ -113,8 +112,8 @@
 
         /**
          * Read-only attribute, tell current state is running or stop.
-         * 
-         * @return {boolean}
+         *
+         * @return {boolean} Result.
          */
 
 
@@ -124,7 +123,7 @@
                 var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
                 var isRunning = _.get(this).state.isRunning;
-                if (isRunning) return;
+                if (isRunning) return this;
 
                 var fn = _.get(this).method.repeat;
                 delay = Number(delay);
@@ -142,7 +141,7 @@
                 var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
                 var isRunning = _.get(this).state.isRunning;
-                if (!isRunning) return;
+                if (!isRunning) return this;
 
                 // cancel method may change frequently.
                 // so can't just reference it.
