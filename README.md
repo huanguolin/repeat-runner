@@ -1,6 +1,6 @@
 # repeat-runner
 
-[![Build Status](https://img.shields.io/circleci/project/Huanguolin/repeat-runner/master.svg)](https://circleci.com/gh/Huanguolin/repeat-runner)
+[![Build Status](https://img.shields.io/circleci/project/huanguolin/repeat-runner/master.svg)](https://circleci.com/gh/huanguolin/repeat-runner)
 [![Coverage Status](https://img.shields.io/codecov/c/github/Huanguolin/repeat-runner/master.svg)](https://codecov.io/github/Huanguolin/repeat-runner?branch=master)
 [![NPM Download](https://img.shields.io/npm/dt/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
 [![NPM Version](https://img.shields.io/npm/v/repeat-runner.svg?style=flat)](https://www.npmjs.org/package/repeat-runner)
