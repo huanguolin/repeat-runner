@@ -55,22 +55,21 @@
          * RepeatRunner constructor function.
          *
          * @param {function} fn A function wrap the code you want repeat.
-         * @param {number} interval The interval time between two repeat run (unit: ms).
-         *                  And you can change it in runtime via "fn" return promise:
-         *                  resolve(interval).
+         * @param {number} interval The interval time(unit: ms) between to run next fn.
+         *                  You can change it in runtime via repeatRunner#interval.
          * @return {repeatRunner} The instance.
          */
-        function RepeatRunner(fn) {
-            var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
+        function RepeatRunner(fn, interval) {
             _classCallCheck(this, RepeatRunner);
 
             if (typeof fn !== 'function') {
-                throw new Error('Frist parameter must be a function.');
+                throw new Error('Frist parameter must be a function!');
             }
 
-            interval = Number(interval);
-            interval = interval > 0 ? Math.floor(interval) : 0;
+            interval = Number.parseInt(interval);
+            if (Number.isNaN(interval) || interval < 0) {
+                throw new Error('Second parmeter must be an non-negative integer number!');
+            }
 
             var state = {
                 isRunning: false,
@@ -87,12 +86,9 @@
                 var isCancel = false;
                 var timerId = -1;
 
-                Promise.resolve(fn()).then(function (newInterval) {
+                Promise.resolve(fn()).then(function () {
                     if (isCancel) return;
 
-                    if (typeof newInterval === 'number' && newInterval >= 0) {
-                        state.interval = newInterval;
-                    }
                     timerId = setTimeout(method.repeat, state.interval);
                 }).catch(function () {
                     return method.cancel();
@@ -167,6 +163,12 @@
             key: 'interval',
             get: function get() {
                 return _.get(this).state.interval;
+            },
+            set: function set(val) {
+                var v = Number.parseInt(val);
+                if (Number.isNaN(v) || v < 0) throw new Error('Invalid interval: ' + val);
+
+                _.get(this).state.interval = v;
             }
         }]);
 
