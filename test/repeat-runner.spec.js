@@ -16,14 +16,6 @@ describe('RepeatRunner#constructor', () => {
         expect(typeof instance.stop).to.be.equal('function');
     });
 
-    it('omit second parameter is ok', () => {
-        expect(() => new RepeatRunner(() => {})).to.not.throw(Error);
-    });
-
-    it('can not omit all parameter', () => {
-        expect(() => new RepeatRunner()).to.be.throw(Error);
-    });
-
     it('frist parameter should be function', () => {
         // array
         expect(() => new RepeatRunner([], 500)).to.be.throw(Error);
@@ -36,45 +28,72 @@ describe('RepeatRunner#constructor', () => {
         // boolean
         expect(() => new RepeatRunner(true, 500)).to.be.throw(Error);
     });
+
+    it('second parameter should be integer', () => {
+        // omit
+        expect(() => new RepeatRunner(() => null)).to.be.throw(Error);
+        // NaN
+        expect(() => new RepeatRunner(() => null, 'abc')).to.be.throw(Error);
+        // negative integer
+        expect(() => new RepeatRunner(() => null, -1)).to.be.throw(Error);
+    });
 });
 
 describe('RepeatRunner.interval', () => {
-    const INTERVAL = 10;
+    const INTERVAL = 100; // 0.1S
+    let instance,
+        cnt; // eslint-disable-line no-unused-vars
 
-    it(`execFunction return a number can change the interval`,
+    beforeEach(() => {
+        cnt = 0;
+        instance = new RepeatRunner(() => {
+            // Here can't omit '{}', because arrow function
+            // make default return value to be 'cnt++'.
+            // It'll change inner interval !!
+            cnt++;
+        }, INTERVAL);
+    });
+
+    afterEach(() => {
+        instance.stop();
+        instance = null;
+    });
+
+    it('set valid value, should get same integer value', () => {
+        instance.interval = INTERVAL * 3;
+        expect(instance.interval === INTERVAL * 3).to.be.true;
+
+        instance.start();
+        instance.interval = INTERVAL * 2;
+        expect(instance.interval === INTERVAL * 2).to.be.true;
+    });
+
+    it('set invalid value, should throw error', () => {
+        expect(() => (instance.interval = 'abc')).to.be.throw(Error);
+        expect(() => (instance.interval = -5)).to.be.throw(Error);
+    });
+
+    it('set valid value and start, two circle later, cnt must be 3',
         function (done) {
-            const rr = new RepeatRunner(() => INTERVAL * 3, INTERVAL);
-            expect(rr.interval === INTERVAL).to.be.true;
-
-            rr.start().stop(1);
+            let newInterval = INTERVAL * 0.5;
+            instance.interval = newInterval;
+            instance.start();
             setTimeout(() => {
-                if (rr.interval === (INTERVAL * 3)) done();
+                if (cnt === 3) done();
                 else done(new Error());
-            }, 0);
+            }, newInterval * 2 + 10);
         });
 
-    it(`execFunction return not a number can't change the interval`,
+    it(`set interval = ${INTERVAL * 2} after start, 
+        ${INTERVAL * 2 + 1}ms later, cnt must be 2`,
         function (done) {
-            const rr = new RepeatRunner(() => `${INTERVAL * 3}`, INTERVAL);
-            expect(rr.interval === INTERVAL).to.be.true;
-
-            rr.start().stop(1);
+            instance.start();
+            let newInterval = INTERVAL * 2;
+            instance.interval = newInterval;
             setTimeout(() => {
-                if (rr.interval !== (INTERVAL * 3)) done();
+                if (cnt === 2) done();
                 else done(new Error());
-            }, 0);
-        });
-
-    it(`execFunction return Promise#resolve(number) can change the interval also`,
-        function (done) {
-            const rr = new RepeatRunner(() => Promise.resolve(INTERVAL * 3), INTERVAL);
-            expect(rr.interval === INTERVAL).to.be.true;
-
-            rr.start().stop(1);
-            setTimeout(() => {
-                if (rr.interval === (INTERVAL * 3)) done();
-                else done(new Error());
-            }, 0);
+            }, newInterval + 10);
         });
 });
 
