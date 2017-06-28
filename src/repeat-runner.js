@@ -12,18 +12,19 @@ class RepeatRunner {
      * RepeatRunner constructor function.
      *
      * @param {function} fn A function wrap the code you want repeat.
-     * @param {number} interval The interval time between two repeat run (unit: ms).
-     *                  And you can change it in runtime via "fn" return promise:
-     *                  resolve(interval).
+     * @param {number} interval The interval time(unit: ms) between to run next fn.
+     *                  You can change it in runtime via repeatRunner#interval.
      * @return {repeatRunner} The instance.
      */
-    constructor (fn, interval = 0) {
+    constructor (fn, interval) {
         if (typeof fn !== 'function') {
-            throw new Error('Frist parameter must be a function.');
+            throw new Error('Frist parameter must be a function!');
         }
 
-        interval = Number(interval);
-        interval = interval > 0 ? Math.floor(interval) : 0;
+        interval = Number.parseInt(interval);
+        if (Number.isNaN(interval) || interval < 0) {
+            throw new Error('Second parmeter must be an non-negative integer number!');
+        }
 
         const state = {
             isRunning: false,
@@ -41,13 +42,9 @@ class RepeatRunner {
             let timerId = -1;
 
             Promise.resolve(fn())
-                .then(newInterval => {
+                .then(() => {
                     if (isCancel) return;
 
-                    if (typeof newInterval === 'number' &&
-                        newInterval >= 0) {
-                        state.interval = newInterval;
-                    }
                     timerId = setTimeout(method.repeat, state.interval);
                 }).catch(() => method.cancel());
 
@@ -73,7 +70,7 @@ class RepeatRunner {
     }
 
     /**
-     * Read-only attribute, tell current interval.
+     * Get current interval.
      *
      * @return {number} Result.
      */
@@ -82,9 +79,19 @@ class RepeatRunner {
     }
 
     /**
+     * Set current interval.
+     */
+    set interval (val) {
+        let v = Number.parseInt(val);
+        if (Number.isNaN(v) || v < 0) throw new Error(`Invalid interval: ${val}`);
+
+        _.get(this).state.interval = v;
+    }
+
+    /**
      * Start runner.
      *
-     * @param {number} delay Optional parameter use to delay start action
+     * @param {number} delay Optional parameter use to delay start action.
      * @return {this} The reference of this instance.
      */
     start (delay = -1) {
@@ -105,7 +112,7 @@ class RepeatRunner {
     /**
      * Stop runner.
      *
-     * @param {number} delay Optional parameter use to delay stop action
+     * @param {number} delay Optional parameter use to delay stop action.
      * @return {this} The reference of this instance.
      */
     stop (delay = -1) {
