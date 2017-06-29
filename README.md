@@ -8,6 +8,8 @@
 
 A javascript tool for run repeat code.
 
+> 📌 Here is 0.x version, want 1.x doc? [click me](https://github.com/huanguolin/repeat-runner/tree/master).
+
 
 
 # Installing 
