@@ -61,6 +61,8 @@ const repeatAsyncHello = new RepeatRunner( () => {
     });
 }, 1000);
 
+
+
 // simple-2
 // with async/await grammar
 async function fetchUsers () {
@@ -73,6 +75,38 @@ const autoUpdateUsers = new RepeatRunner(fetchUsers, 20000);
 function updateUserTable (userList) {
     /* ... update UI */
 }
+
+
+
+// simple-3
+// stop repeat via Promise#reject
+let cnt = 0;
+
+new RepeatRunner(counting, 1000).start();
+
+function counting () {
+    return new Promise( (resolve, reject) => {   
+        // print         
+        console.log(cnt);
+        // plus
+        cnt++;
+
+        if (cnt > 4) {
+            reject(); // stop it 
+        } else { 
+            resolve(); 
+        }
+    });
+};
+
+// result
+/*
+0  // 0s
+1  // 1s
+2  // 2s
+3  // 3s
+4  // 4s, and stop now
+*/
 ```
 
 
@@ -97,9 +131,9 @@ Parameters
 
 
 
-## Promises
+## Dependencies
 
-repeat-runner depends on a native ES6 [Promise](http://es6-features.org/#PromiseUsage) and [WeakMap](http://es6-features.org/#WeakLinkDataStructures) implementation to be supported.   
+repeat-runner depends on a native ES6 [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) and [WeakMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap) implementation to be supported.   
 If your environment doesn't support ES6 Promises, you can polyfill ([Promise](https://github.com/jakearchibald/es6-promise), [Weakmap](https://github.com/Polymer/WeakMap)).
 
 

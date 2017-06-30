@@ -75,6 +75,8 @@ describe('RepeatRunner.interval', () => {
 
     it('set valid value and start, two circle later, cnt must be 3',
         function (done) {
+            this.timeout(INTERVAL * 5);
+
             let newInterval = INTERVAL * 0.5;
             instance.interval = newInterval;
             instance.start();
@@ -87,6 +89,8 @@ describe('RepeatRunner.interval', () => {
     it(`set interval = ${INTERVAL * 2} after start, 
         ${INTERVAL * 2 + 1}ms later, cnt must be 2`,
         function (done) {
+            this.timeout(INTERVAL * 5);
+
             instance.start();
             let newInterval = INTERVAL * 2;
             instance.interval = newInterval;
