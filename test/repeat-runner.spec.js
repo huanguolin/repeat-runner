@@ -8,7 +8,7 @@ describe('RepeatRunner#constructor', () => {
         let instance;
 
         expect(() => {
-            instance = new RepeatRunner(() => {}, 500);
+            instance = new RepeatRunner(() => {}, 500, true);
         }).to.not.throw(Error);
 
         expect(instance).to.have.property('isRunning');
@@ -131,17 +131,6 @@ describe('RepeatRunner.isRunning', () => {
         instance.stop();
         expect(instance.isRunning).to.be.false;
     });
-
-    it('execFunction return Promise#reject can stop it',
-        function (done) {
-            instance = new RepeatRunner(() => Promise.reject(new Error()), INTERVAL);
-            instance.start();
-
-            setTimeout(() => {
-                if (instance.isRunning) done(new Error());
-                else done();
-            }, 0);
-        });
 });
 
 describe('RepeatRunner#start', () => {

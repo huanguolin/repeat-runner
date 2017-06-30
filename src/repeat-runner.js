@@ -11,13 +11,14 @@ class RepeatRunner {
     /**
      * RepeatRunner constructor function.
      *
-     * @param {function} fn A function wrap the code you want repeat.
-     * @param {number} interval The interval time(unit: ms) between to run next fn.
-     *                  You can change it in runtime via repeatRunner#interval.
-     * @return {repeatRunner} The instance.
+     * @param {function} func A function wrap the code that you want repeat execute.
+     * @param {number} interval The interval time of repeat execute(unit: ms).
+     * @param {boolean} stopWhenError Optional, configure whether to allow stop repeat
+     *                  when error occur(default is false).
+     * @return {repeatRunner} The instance of RepeatRunner.
      */
-    constructor (fn, interval) {
-        if (typeof fn !== 'function') {
+    constructor (func, interval, stopWhenError = false) {
+        if (typeof func !== 'function') {
             throw new Error('Frist parameter must be a function!');
         }
 
@@ -25,6 +26,8 @@ class RepeatRunner {
         if (Number.isNaN(interval) || interval < 0) {
             throw new Error('Second parmeter must be an non-negative integer number!');
         }
+
+        stopWhenError = !!stopWhenError;
 
         const state = {
             isRunning: false,
@@ -41,15 +44,25 @@ class RepeatRunner {
             let isCancel = false;
             let timerId = -1;
 
-            Promise.resolve(fn())
+            // Pass this as parameter for 'func', make the easy way to use
+            // this#isRunning, this#interval and this#stop, except this#start.
+            Promise.resolve(func(this))
                 .then(() => {
                     if (isCancel) return;
 
                     timerId = setTimeout(method.repeat, state.interval);
-                }).catch(() => method.cancel());
+                }).catch(() => {
+                    if (stopWhenError) {
+                        method.cancel();
+                    } else {
+                        timerId = setTimeout(method.repeat, state.interval);
+                    }
+                });
 
             method.cancel = () => {
                 isCancel = true;
+
+                // clearTimeout will auto ignore invaid timerId
                 clearTimeout(timerId);
 
                 // update state
@@ -98,12 +111,12 @@ class RepeatRunner {
         const isRunning = _.get(this).state.isRunning;
         if (isRunning) return this;
 
-        const fn = _.get(this).method.repeat;
-        delay = Number(delay);
+        const repeat = _.get(this).method.repeat;
+        delay = Number.parseInt(delay);
         if (Number.isNaN(delay) || delay < 0) {
-            fn();
+            repeat();
         } else {
-            setTimeout(fn, delay);
+            setTimeout(repeat, delay);
         }
 
         return this;
@@ -119,15 +132,16 @@ class RepeatRunner {
         const isRunning = _.get(this).state.isRunning;
         if (!isRunning) return this;
 
-        // cancel method may change frequently.
-        // so can't just reference it.
-        const fs = _.get(this).method;
-        delay = Number(delay);
+        // The method 'cancel' be changed in every cricle.
+        // So can not use it directly in some case(see below).
+        const methods = _.get(this).method;
+        delay = Number.parseInt(delay);
         if (Number.isNaN(delay) || delay < 0) {
-            fs.cancel();
+            methods.cancel();
         } else {
-            // can't reference cancel, see above.
-            setTimeout(() => fs.cancel(), delay);
+            // 'cancel' can not be used directly here!
+            // If delay > this.interval, 'cancel' must be changed.
+            setTimeout(() => methods.cancel(), delay);
         }
 
         return this;
