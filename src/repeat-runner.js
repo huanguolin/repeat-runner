@@ -31,7 +31,8 @@ class RepeatRunner {
 
         const state = {
             isRunning: false,
-            interval
+            interval,
+            lastError: null
         };
         const method = {
             repeat: null,
@@ -46,12 +47,13 @@ class RepeatRunner {
 
             // Pass this as parameter for 'func', make the easy way to use
             // this#isRunning, this#interval and this#stop, except this#start.
-            Promise.resolve(func(this))
+            new Promise(resolve => resolve(func(this)))
                 .then(() => {
+                    state.lastError = null;
                     if (isCancel) return;
-
                     timerId = setTimeout(method.repeat, state.interval);
-                }).catch(() => {
+                }).catch(err => {
+                    state.lastError = err;
                     if (stopWhenError) {
                         method.cancel();
                     } else {
@@ -76,10 +78,19 @@ class RepeatRunner {
     /**
      * Read-only attribute, tell current state is running or stop.
      *
-     * @return {boolean} Result.
+     * @return {boolean}.
      */
     get isRunning () {
         return _.get(this).state.isRunning;
+    }
+
+    /**
+     * Read-only attribute, tell the last error.
+     *
+     * @return {Error}.
+     */
+    get lastError () {
+        return _.get(this).state.lastError;
     }
 
     /**

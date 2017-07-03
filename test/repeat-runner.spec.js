@@ -6,14 +6,19 @@ const expect = chai.expect;
 describe('RepeatRunner#constructor', () => {
     it('all right', () => {
         let instance;
+        const INTERVAL = 100;
 
         expect(() => {
-            instance = new RepeatRunner(() => {}, 500, true);
+            instance = new RepeatRunner(() => {}, INTERVAL, true);
         }).to.not.throw(Error);
 
         expect(instance).to.have.property('isRunning');
+        expect(instance).to.have.property('interval');
         expect(typeof instance.start).to.be.equal('function');
         expect(typeof instance.stop).to.be.equal('function');
+
+        expect(instance.isRunning).to.be.false;
+        expect(instance.interval === INTERVAL).to.be.true;
     });
 
     it('frist parameter should be function', () => {
@@ -36,6 +41,63 @@ describe('RepeatRunner#constructor', () => {
         expect(() => new RepeatRunner(() => null, 'abc')).to.be.throw(Error);
         // negative integer
         expect(() => new RepeatRunner(() => null, -1)).to.be.throw(Error);
+    });
+
+    it('set third parameter true, runner will stop when catch error', done => {
+        const runner = new RepeatRunner(() => {
+            throw new Error();
+        }, 500, true).start();
+
+        expect(runner.isRunning).to.be.true;
+        setTimeout(() => {
+            if (runner.isRunning && (runner.lastError instanceof Error)) done(new Error());
+            else done();
+        }, 0);
+    });
+
+    it('set third parameter false, runner will continue when catch error', done => {
+        const runner = new RepeatRunner(() => {
+            throw new Error();
+        }, 500, false).start();
+
+        expect(runner.isRunning).to.be.true;
+        setTimeout(() => {
+            if (runner.isRunning && (runner.lastError instanceof Error)) done();
+            else done(new Error());
+
+            runner.stop();
+        }, 1000);
+    });
+});
+
+describe('RepeatRunner.isRunning', () => {
+    const INTERVAL = 100; // 0.1S
+    let instance,
+        cnt; // eslint-disable-line no-unused-vars
+
+    beforeEach(() => {
+        cnt = 0;
+        instance = new RepeatRunner(() => cnt++, INTERVAL);
+    });
+
+    afterEach(() => {
+        instance.stop();
+        instance = null;
+    });
+
+    it('not start, should be not running', () => {
+        expect(instance.isRunning).to.be.false;
+    });
+
+    it('start it and should be running', () => {
+        instance.start();
+        expect(instance.isRunning).to.be.true;
+    });
+
+    it('stop it and should be not running', () => {
+        instance.start();
+        instance.stop();
+        expect(instance.isRunning).to.be.false;
     });
 });
 
@@ -99,42 +161,6 @@ describe('RepeatRunner.interval', () => {
                 else done(new Error());
             }, newInterval + 10);
         });
-});
-
-describe('RepeatRunner.isRunning', () => {
-    const INTERVAL = 100; // 0.1S
-    let instance,
-        cnt; // eslint-disable-line no-unused-vars
-
-    beforeEach(() => {
-        cnt = 0;
-        instance = new RepeatRunner(() => {
-            // Here can't omit '{}', because arrow function
-            // make default return value to be 'cnt++'.
-            // It'll change inner interval !!
-            cnt++;
-        }, INTERVAL);
-    });
-
-    afterEach(() => {
-        instance.stop();
-        instance = null;
-    });
-
-    it('not start, should be not running', () => {
-        expect(instance.isRunning).to.be.false;
-    });
-
-    it('start it and should be running', () => {
-        instance.start();
-        expect(instance.isRunning).to.be.true;
-    });
-
-    it('stop it and should be not running', () => {
-        instance.start();
-        instance.stop();
-        expect(instance.isRunning).to.be.false;
-    });
 });
 
 describe('RepeatRunner#start', () => {
