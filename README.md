@@ -47,7 +47,7 @@ Repeat async code.
 If your code contain async process, and you hope set next repeat after async process complete.
 Just make the function return a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 Of course, you can use [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) grammar.    
-**Notice**: `Promise#reject` will make it stop repeat.
+**Notice**: Set third parameter to `true` (see [API](https://github.com/huanguolin/repeat-runner#api)), will make runner stop when `Promise#reject` or any uncatched error .
 
 ```js
 // simple-1
@@ -120,12 +120,14 @@ Syntax
 
 Parameters
 > `execFunction: {function}` this function wrap the code that need repeat  
-> `interval: {number}` repeat interval (unit: ms)
+> `interval: {number}` repeat interval (unit: ms)  
+> `stopWhenError: {boolean}` configure whether to allow stop repeat when error occur(default is false)
 
 ### Instance property & methods
 
 > `RepeatRunner.isRunning` [read-only] get current status    
 > `RepeatRunner.interval` [read/write] get current interval or set new interval    
+> `RepeatRunner.lastError` [read-only] get last error that occur in `execFunction`    
 > `RepeatRunner.prototype.start(delay = -1)` [return this] start runner  
 > `RepeatRunner.prototype.stop(delay = -1)` [return this] stop runner   
 
