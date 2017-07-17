@@ -54,15 +54,20 @@
         /**
          * RepeatRunner constructor function.
          *
-         * @param {function} fn A function wrap the code you want repeat.
-         * @param {number} interval The interval time(unit: ms) between to run next fn.
-         *                  You can change it in runtime via repeatRunner#interval.
-         * @return {repeatRunner} The instance.
+         * @param {function} func A function wrap the code that you want repeat execute.
+         * @param {number} interval The interval time of repeat execute(unit: ms).
+         * @param {boolean} stopWhenError Optional, configure whether to allow stop repeat
+         *                  when error occur(default is false).
+         * @return {repeatRunner} The instance of RepeatRunner.
          */
-        function RepeatRunner(fn, interval) {
+        function RepeatRunner(func, interval) {
+            var _this = this;
+
+            var stopWhenError = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
             _classCallCheck(this, RepeatRunner);
 
-            if (typeof fn !== 'function') {
+            if (typeof func !== 'function') {
                 throw new Error('Frist parameter must be a function!');
             }
 
@@ -71,9 +76,12 @@
                 throw new Error('Second parmeter must be an non-negative integer number!');
             }
 
+            stopWhenError = !!stopWhenError;
+
             var state = {
                 isRunning: false,
-                interval: interval
+                interval: interval,
+                lastError: null
             };
             var method = {
                 repeat: null,
@@ -86,16 +94,27 @@
                 var isCancel = false;
                 var timerId = -1;
 
-                Promise.resolve(fn()).then(function () {
+                // Pass this as parameter for 'func', make the easy way to use
+                // this#isRunning, this#interval and this#stop, except this#start.
+                new Promise(function (resolve) {
+                    return resolve(func(_this));
+                }).then(function () {
+                    state.lastError = null;
                     if (isCancel) return;
-
                     timerId = setTimeout(method.repeat, state.interval);
-                }).catch(function () {
-                    return method.cancel();
+                }).catch(function (err) {
+                    state.lastError = err;
+                    if (stopWhenError) {
+                        method.cancel();
+                    } else {
+                        timerId = setTimeout(method.repeat, state.interval);
+                    }
                 });
 
                 method.cancel = function () {
                     isCancel = true;
+
+                    // clearTimeout will auto ignore invaid timerId
                     clearTimeout(timerId);
 
                     // update state
@@ -109,7 +128,7 @@
         /**
          * Read-only attribute, tell current state is running or stop.
          *
-         * @return {boolean} Result.
+         * @return {boolean}.
          */
 
 
@@ -121,12 +140,12 @@
                 var isRunning = _.get(this).state.isRunning;
                 if (isRunning) return this;
 
-                var fn = _.get(this).method.repeat;
-                delay = Number(delay);
+                var repeat = _.get(this).method.repeat;
+                delay = Number.parseInt(delay);
                 if (Number.isNaN(delay) || delay < 0) {
-                    fn();
+                    repeat();
                 } else {
-                    setTimeout(fn, delay);
+                    setTimeout(repeat, delay);
                 }
 
                 return this;
@@ -139,16 +158,17 @@
                 var isRunning = _.get(this).state.isRunning;
                 if (!isRunning) return this;
 
-                // cancel method may change frequently.
-                // so can't just reference it.
-                var fs = _.get(this).method;
-                delay = Number(delay);
+                // The method 'cancel' be changed in every cricle.
+                // So can not use it directly in some case(see below).
+                var methods = _.get(this).method;
+                delay = Number.parseInt(delay);
                 if (Number.isNaN(delay) || delay < 0) {
-                    fs.cancel();
+                    methods.cancel();
                 } else {
-                    // can't reference cancel, see above.
+                    // 'cancel' can not be used directly here!
+                    // If delay > this.interval, 'cancel' must be changed.
                     setTimeout(function () {
-                        return fs.cancel();
+                        return methods.cancel();
                     }, delay);
                 }
 
@@ -158,6 +178,11 @@
             key: 'isRunning',
             get: function get() {
                 return _.get(this).state.isRunning;
+            }
+        }, {
+            key: 'lastError',
+            get: function get() {
+                return _.get(this).state.lastError;
             }
         }, {
             key: 'interval',
