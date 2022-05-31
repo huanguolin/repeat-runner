@@ -54,20 +54,20 @@
         /**
          * RepeatRunner constructor function.
          *
-         * @param {function} func A function wrap the code that you want repeat execute.
+         * @param {function} execFunc A function wrap the code that you want repeat execute.
          * @param {number} interval The interval time of repeat execute(unit: ms).
          * @param {boolean} stopWhenError Optional, configure whether to allow stop repeat
          *                  when error occur(default is false).
          * @return {repeatRunner} The instance of RepeatRunner.
          */
-        function RepeatRunner(func, interval) {
+        function RepeatRunner(execFunc, interval) {
             var _this = this;
 
             var stopWhenError = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             _classCallCheck(this, RepeatRunner);
 
-            if (typeof func !== 'function') {
+            if (typeof execFunc !== 'function') {
                 throw new Error('Frist parameter must be a function!');
             }
 
@@ -84,6 +84,7 @@
                 lastError: null
             };
             var method = {
+                execFunc: execFunc,
                 repeat: null,
                 cancel: null
             };
@@ -94,10 +95,10 @@
                 var isCancel = false;
                 var timerId = -1;
 
-                // Pass this as parameter for 'func', make the easy way to use
+                // Pass this as parameter for 'execFunc', make the easy way to use
                 // this#isRunning, this#interval and this#stop, except this#start.
                 new Promise(function (resolve) {
-                    return resolve(func(_this));
+                    return resolve(method.execFunc(_this));
                 }).then(function () {
                     state.lastError = null;
                     if (isCancel) return;
@@ -194,6 +195,16 @@
                 if (Number.isNaN(v) || v < 0) throw new Error('Invalid interval: ' + val);
 
                 _.get(this).state.interval = v;
+            }
+        }, {
+            key: 'execFunc',
+            get: function get() {
+                return _.get(this).method.execFunc;
+            },
+            set: function set(val) {
+                if (typeof val !== 'function') throw new Error('Invalid \'execFunc\': ' + val);
+
+                _.get(this).method.execFunc = val;
             }
         }]);
 

@@ -11,14 +11,14 @@ class RepeatRunner {
     /**
      * RepeatRunner constructor function.
      *
-     * @param {function} func A function wrap the code that you want repeat execute.
+     * @param {function} execFunc A function wrap the code that you want repeat execute.
      * @param {number} interval The interval time of repeat execute(unit: ms).
      * @param {boolean} stopWhenError Optional, configure whether to allow stop repeat
      *                  when error occur(default is false).
      * @return {repeatRunner} The instance of RepeatRunner.
      */
-    constructor (func, interval, stopWhenError = false) {
-        if (typeof func !== 'function') {
+    constructor (execFunc, interval, stopWhenError = false) {
+        if (typeof execFunc !== 'function') {
             throw new Error('Frist parameter must be a function!');
         }
 
@@ -35,6 +35,7 @@ class RepeatRunner {
             lastError: null
         };
         const method = {
+            execFunc,
             repeat: null,
             cancel: null
         };
@@ -45,9 +46,9 @@ class RepeatRunner {
             let isCancel = false;
             let timerId = -1;
 
-            // Pass this as parameter for 'func', make the easy way to use
+            // Pass this as parameter for 'execFunc', make the easy way to use
             // this#isRunning, this#interval and this#stop, except this#start.
-            new Promise(resolve => resolve(func(this)))
+            new Promise(resolve => resolve(method.execFunc(this)))
                 .then(() => {
                     state.lastError = null;
                     if (isCancel) return;
@@ -110,6 +111,24 @@ class RepeatRunner {
         if (Number.isNaN(v) || v < 0) throw new Error(`Invalid interval: ${val}`);
 
         _.get(this).state.interval = v;
+    }
+
+    /**
+     * Get current 'execFunc'.
+     *
+     * @return {function} Result.
+     */
+    get execFunc () {
+        return _.get(this).method.execFunc;
+    }
+
+    /**
+     * Set current 'execFunc'.
+     */
+    set execFunc (val) {
+        if (typeof val !== 'function') throw new Error(`Invalid 'execFunc': ${val}`);
+
+        _.get(this).method.execFunc = val;
     }
 
     /**

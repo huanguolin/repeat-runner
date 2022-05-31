@@ -126,7 +126,8 @@ Parameters
 ### Instance property & methods
 
 > `RepeatRunner.isRunning` [read-only] get current status    
-> `RepeatRunner.interval` [read/write] get current interval or set new interval    
+> `RepeatRunner.interval` [read/write] get current interval or set new interval        
+> `RepeatRunner.execFunc` [read/write] get current `execFunction` or set new `execFunction`    
 > `RepeatRunner.lastError` [read-only] get last error that occur in `execFunction`    
 > `RepeatRunner.prototype.start(delay = -1)` [return this] start runner  
 > `RepeatRunner.prototype.stop(delay = -1)` [return this] stop runner   
