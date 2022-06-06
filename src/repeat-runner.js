@@ -5,8 +5,6 @@
  * Released under the MIT License.
  */
 
-const _ = new WeakMap();
-
 class RepeatRunner {
     /**
      * RepeatRunner constructor function.
@@ -29,51 +27,49 @@ class RepeatRunner {
 
         stopWhenError = !!stopWhenError;
 
-        const state = {
+        this._state = {
             isRunning: false,
             interval,
             lastError: null
         };
-        const method = {
+        this._method = {
             execFunc,
             repeat: null,
             cancel: null
         };
 
-        method.repeat = () => {
-            state.isRunning = true;
+        this._method.repeat = () => {
+            this._state.isRunning = true;
 
             let isCancel = false;
             let timerId = -1;
 
             // Pass this as parameter for 'execFunc', make the easy way to use
             // this#isRunning, this#interval and this#stop, except this#start.
-            new Promise(resolve => resolve(method.execFunc(this)))
+            new Promise(resolve => resolve(this._method.execFunc(this)))
                 .then(() => {
-                    state.lastError = null;
+                    this._state.lastError = null;
                     if (isCancel) return;
-                    timerId = setTimeout(method.repeat, state.interval);
+                    timerId = setTimeout(this._method.repeat, this._state.interval);
                 }).catch(err => {
-                    state.lastError = err;
+                    this._state.lastError = err;
                     if (stopWhenError) {
-                        method.cancel();
+                        this._method.cancel();
                     } else {
-                        timerId = setTimeout(method.repeat, state.interval);
+                        timerId = setTimeout(this._method.repeat, this._state.interval);
                     }
                 });
 
-            method.cancel = () => {
+            this._method.cancel = () => {
                 isCancel = true;
 
                 // clearTimeout will auto ignore invalid timerId
                 clearTimeout(timerId);
 
                 // update state
-                state.isRunning = false;
+                this._state.isRunning = false;
             };
         };
-
-        _.set(this, { state, method });
     }
 
     /**
@@ -82,7 +78,7 @@ class RepeatRunner {
      * @return {boolean}.
      */
     get isRunning () {
-        return _.get(this).state.isRunning;
+        return this._state.isRunning;
     }
 
     /**
@@ -91,7 +87,7 @@ class RepeatRunner {
      * @return {Error}.
      */
     get lastError () {
-        return _.get(this).state.lastError;
+        return this._state.lastError;
     }
 
     /**
@@ -100,7 +96,7 @@ class RepeatRunner {
      * @return {number} Result.
      */
     get interval () {
-        return _.get(this).state.interval;
+        return this._state.interval;
     }
 
     /**
@@ -110,7 +106,7 @@ class RepeatRunner {
         let v = Number.parseInt(val);
         if (Number.isNaN(v) || v < 0) throw new Error(`Invalid interval: ${val}`);
 
-        _.get(this).state.interval = v;
+        this._state.interval = v;
     }
 
     /**
@@ -119,7 +115,7 @@ class RepeatRunner {
      * @return {function} Result.
      */
     get execFunc () {
-        return _.get(this).method.execFunc;
+        return this._method.execFunc;
     }
 
     /**
@@ -128,7 +124,7 @@ class RepeatRunner {
     set execFunc (val) {
         if (typeof val !== 'function') throw new Error(`Invalid 'execFunc': ${val}`);
 
-        _.get(this).method.execFunc = val;
+        this._method.execFunc = val;
     }
 
     /**
@@ -138,10 +134,10 @@ class RepeatRunner {
      * @return {this} The reference of this instance.
      */
     start (delay = -1) {
-        const isRunning = _.get(this).state.isRunning;
+        const isRunning = this._state.isRunning;
         if (isRunning) return this;
 
-        const repeat = _.get(this).method.repeat;
+        const repeat = this._method.repeat;
         delay = Number.parseInt(delay);
         if (Number.isNaN(delay) || delay < 0) {
             repeat();
@@ -159,12 +155,12 @@ class RepeatRunner {
      * @return {this} The reference of this instance.
      */
     stop (delay = -1) {
-        const isRunning = _.get(this).state.isRunning;
+        const isRunning = this._state.isRunning;
         if (!isRunning) return this;
 
         // The method 'cancel' be changed in every circle.
         // So can not use it directly in some case(see below).
-        const methods = _.get(this).method;
+        const methods = this._method;
         delay = Number.parseInt(delay);
         if (Number.isNaN(delay) || delay < 0) {
             methods.cancel();

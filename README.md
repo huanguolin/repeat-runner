@@ -82,7 +82,7 @@ function updateUserTable (userList) {
 // stop repeat via Promise#reject
 let cnt = 0;
 
-new RepeatRunner(counting, 1000).start();
+new RepeatRunner(counting, 1000, true).start();
 
 function counting () {
     return new Promise( (resolve, reject) => {   
@@ -136,8 +136,8 @@ Parameters
 
 ## Dependencies
 
-repeat-runner depends on a native ES6 [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) and [WeakMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap) implementation to be supported.   
-If your environment doesn't support ES6 Promises, you can polyfill ([Promise](https://github.com/jakearchibald/es6-promise), [Weakmap](https://github.com/Polymer/WeakMap)).
+repeat-runner depends on a native ES6 [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) implementation to be supported.   
+If your environment doesn't support ES6 Promises, you can polyfill ([Promise](https://github.com/jakearchibald/es6-promise)).
 
 
 

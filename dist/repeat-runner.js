@@ -41,15 +41,6 @@
         };
     }();
 
-    /*!
-     * RepeatRunner
-     *
-     * (c) 2017 Alvin Huang
-     * Released under the MIT License.
-     */
-
-    var _ = new WeakMap();
-
     var RepeatRunner = function () {
         /**
          * RepeatRunner constructor function.
@@ -68,29 +59,29 @@
             _classCallCheck(this, RepeatRunner);
 
             if (typeof execFunc !== 'function') {
-                throw new Error('Frist parameter must be a function!');
+                throw new Error('First parameter must be a function!');
             }
 
             interval = Number.parseInt(interval);
             if (Number.isNaN(interval) || interval < 0) {
-                throw new Error('Second parmeter must be an non-negative integer number!');
+                throw new Error('Second parameter must be an non-negative integer number!');
             }
 
             stopWhenError = !!stopWhenError;
 
-            var state = {
+            this._state = {
                 isRunning: false,
                 interval: interval,
                 lastError: null
             };
-            var method = {
+            this._method = {
                 execFunc: execFunc,
                 repeat: null,
                 cancel: null
             };
 
-            method.repeat = function () {
-                state.isRunning = true;
+            this._method.repeat = function () {
+                _this._state.isRunning = true;
 
                 var isCancel = false;
                 var timerId = -1;
@@ -98,32 +89,30 @@
                 // Pass this as parameter for 'execFunc', make the easy way to use
                 // this#isRunning, this#interval and this#stop, except this#start.
                 new Promise(function (resolve) {
-                    return resolve(method.execFunc(_this));
+                    return resolve(_this._method.execFunc(_this));
                 }).then(function () {
-                    state.lastError = null;
+                    _this._state.lastError = null;
                     if (isCancel) return;
-                    timerId = setTimeout(method.repeat, state.interval);
+                    timerId = setTimeout(_this._method.repeat, _this._state.interval);
                 }).catch(function (err) {
-                    state.lastError = err;
+                    _this._state.lastError = err;
                     if (stopWhenError) {
-                        method.cancel();
+                        _this._method.cancel();
                     } else {
-                        timerId = setTimeout(method.repeat, state.interval);
+                        timerId = setTimeout(_this._method.repeat, _this._state.interval);
                     }
                 });
 
-                method.cancel = function () {
+                _this._method.cancel = function () {
                     isCancel = true;
 
-                    // clearTimeout will auto ignore invaid timerId
+                    // clearTimeout will auto ignore invalid timerId
                     clearTimeout(timerId);
 
                     // update state
-                    state.isRunning = false;
+                    _this._state.isRunning = false;
                 };
             };
-
-            _.set(this, { state: state, method: method });
         }
 
         /**
@@ -138,10 +127,10 @@
             value: function start() {
                 var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
-                var isRunning = _.get(this).state.isRunning;
+                var isRunning = this._state.isRunning;
                 if (isRunning) return this;
 
-                var repeat = _.get(this).method.repeat;
+                var repeat = this._method.repeat;
                 delay = Number.parseInt(delay);
                 if (Number.isNaN(delay) || delay < 0) {
                     repeat();
@@ -156,12 +145,12 @@
             value: function stop() {
                 var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : -1;
 
-                var isRunning = _.get(this).state.isRunning;
+                var isRunning = this._state.isRunning;
                 if (!isRunning) return this;
 
-                // The method 'cancel' be changed in every cricle.
+                // The method 'cancel' be changed in every circle.
                 // So can not use it directly in some case(see below).
-                var methods = _.get(this).method;
+                var methods = this._method;
                 delay = Number.parseInt(delay);
                 if (Number.isNaN(delay) || delay < 0) {
                     methods.cancel();
@@ -178,33 +167,33 @@
         }, {
             key: 'isRunning',
             get: function get() {
-                return _.get(this).state.isRunning;
+                return this._state.isRunning;
             }
         }, {
             key: 'lastError',
             get: function get() {
-                return _.get(this).state.lastError;
+                return this._state.lastError;
             }
         }, {
             key: 'interval',
             get: function get() {
-                return _.get(this).state.interval;
+                return this._state.interval;
             },
             set: function set(val) {
                 var v = Number.parseInt(val);
                 if (Number.isNaN(v) || v < 0) throw new Error('Invalid interval: ' + val);
 
-                _.get(this).state.interval = v;
+                this._state.interval = v;
             }
         }, {
             key: 'execFunc',
             get: function get() {
-                return _.get(this).method.execFunc;
+                return this._method.execFunc;
             },
             set: function set(val) {
                 if (typeof val !== 'function') throw new Error('Invalid \'execFunc\': ' + val);
 
-                _.get(this).method.execFunc = val;
+                this._method.execFunc = val;
             }
         }]);
 
