@@ -1,15 +1,15 @@
 declare module 'repeat-runner' {
-    type ExecFunction = (repeatRunner: RepeatRunner) => void;
+    type ExecFunc = (repeatRunner: RepeatRunner) => void;
 
     class RepeatRunner {
         /**
          * RepeatRunner constructor function.
-         * @param {ExecFunction} execFunction A function wrap the code that you want repeat execute.
+         * @param {ExecFunc} execFunc A function wrap the code that you want repeat execute.
          * @param {number} interval The interval time of repeat execute(unit: ms).
          * @param {boolean} stopWhenError Optional, configure whether to allow stop repeat
          *                  when error occur(default is false).
          */
-        constructor(execFunction: ExecFunction, interval: number, stopWhenError?: boolean);
+        constructor(execFunc: ExecFunc, interval: number, stopWhenError?: boolean);
 
         /**
          * Get current status.
@@ -22,7 +22,7 @@ declare module 'repeat-runner' {
         /**
          * Get the current execFunction or set a new execFunction.
          */
-        execFunction: ExecFunction;
+         execFunc: ExecFunc;
         /**
          * Get the last error that occur in the execFunction.
          */
@@ -42,5 +42,5 @@ declare module 'repeat-runner' {
     }
 
     export default RepeatRunner;
-    export { RepeatRunner, ExecFunction };
+    export { RepeatRunner, ExecFunc };
 }

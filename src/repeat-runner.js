@@ -19,12 +19,12 @@ class RepeatRunner {
      */
     constructor (execFunc, interval, stopWhenError = false) {
         if (typeof execFunc !== 'function') {
-            throw new Error('Frist parameter must be a function!');
+            throw new Error('First parameter must be a function!');
         }
 
         interval = Number.parseInt(interval);
         if (Number.isNaN(interval) || interval < 0) {
-            throw new Error('Second parmeter must be an non-negative integer number!');
+            throw new Error('Second parameter must be an non-negative integer number!');
         }
 
         stopWhenError = !!stopWhenError;
@@ -65,7 +65,7 @@ class RepeatRunner {
             method.cancel = () => {
                 isCancel = true;
 
-                // clearTimeout will auto ignore invaid timerId
+                // clearTimeout will auto ignore invalid timerId
                 clearTimeout(timerId);
 
                 // update state
@@ -162,7 +162,7 @@ class RepeatRunner {
         const isRunning = _.get(this).state.isRunning;
         if (!isRunning) return this;
 
-        // The method 'cancel' be changed in every cricle.
+        // The method 'cancel' be changed in every circle.
         // So can not use it directly in some case(see below).
         const methods = _.get(this).method;
         delay = Number.parseInt(delay);
