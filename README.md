@@ -82,7 +82,7 @@ function updateUserTable (userList) {
 // stop repeat via Promise#reject
 let cnt = 0;
 
-new RepeatRunner(counting, 1000).start();
+new RepeatRunner(counting, 1000, true).start();
 
 function counting () {
     return new Promise( (resolve, reject) => {   
