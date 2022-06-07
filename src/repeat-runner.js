@@ -46,6 +46,18 @@ class RepeatRunner {
             let isCancel = false;
             let timerId = -1;
 
+            // Workaround react-native switch background/foreground issue:
+            // Just move 'method.cancel = ...' to the front of 'new Promise(...'.
+            method.cancel = () => {
+                isCancel = true;
+
+                // clearTimeout will auto ignore invalid timerId
+                clearTimeout(timerId);
+
+                // update state
+                state.isRunning = false;
+            };
+
             // Pass this as parameter for 'execFunc', make the easy way to use
             // this#isRunning, this#interval and this#stop, except this#start.
             new Promise(resolve => resolve(method.execFunc(this)))
@@ -61,16 +73,6 @@ class RepeatRunner {
                         timerId = setTimeout(method.repeat, state.interval);
                     }
                 });
-
-            method.cancel = () => {
-                isCancel = true;
-
-                // clearTimeout will auto ignore invalid timerId
-                clearTimeout(timerId);
-
-                // update state
-                state.isRunning = false;
-            };
         };
 
         _.set(this, { state, method });
